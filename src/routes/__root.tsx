@@ -10,6 +10,7 @@ import {
 
 import appCss from "../styles.css?url";
 import { AppShell } from "@/components/AppShell";
+import { ThemeProvider } from "@/components/ThemeProvider";
 
 function NotFoundComponent() {
   return (
