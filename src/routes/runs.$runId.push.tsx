@@ -38,7 +38,7 @@ function PushPage() {
   const [files, setFiles] = useState<CommitFile[]>(mockCommitFiles);
   const [prTitle, setPrTitle] = useState(commitMsg);
   const [prBody, setPrBody] = useState(`## Summary\n${run.task}\n\n## Changes\n${mockCommitFiles.map((f) => `- ${f.filePath} (+${f.additions} −${f.deletions})`).join("\n")}\n\n## Validation\n- TypeScript: pass\n- ESLint: pass\n- Unit tests: pass`);
-  const [phase, setPhase] = useState<typeof PHASES[number]["key"]>("idle");
+  const [phase, setPhase] = useState<PhaseKey>("idle");
   const [progress, setProgress] = useState(0);
   const [logs, setLogs] = useState<string[]>([]);
   const [prUrl, setPrUrl] = useState<string | null>(null);
