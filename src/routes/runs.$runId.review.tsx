@@ -2,7 +2,7 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { mockDiffs, mockRuns } from "@/lib/mockData";
 import { DiffView } from "@/components/DiffView";
-import { Check, X, GitPullRequest, Trash2, MessageSquare, Columns2, FileText } from "lucide-react";
+import { Check, X, ArrowUpFromLine, Trash2, MessageSquare, Columns2, FileText } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/runs/$runId/review")({
