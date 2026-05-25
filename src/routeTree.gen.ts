@@ -18,6 +18,7 @@ import { Route as AgentsRouteImport } from './routes/agents'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as RunsRunIdRouteImport } from './routes/runs.$runId'
 import { Route as RunsRunIdReviewRouteImport } from './routes/runs.$runId.review'
+import { Route as RunsRunIdPushRouteImport } from './routes/runs.$runId.push'
 
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
@@ -64,6 +65,11 @@ const RunsRunIdReviewRoute = RunsRunIdReviewRouteImport.update({
   path: '/review',
   getParentRoute: () => RunsRunIdRoute,
 } as any)
+const RunsRunIdPushRoute = RunsRunIdPushRouteImport.update({
+  id: '/push',
+  path: '/push',
+  getParentRoute: () => RunsRunIdRoute,
+} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
@@ -74,6 +80,7 @@ export interface FileRoutesByFullPath {
   '/prompts': typeof PromptsRoute
   '/settings': typeof SettingsRoute
   '/runs/$runId': typeof RunsRunIdRouteWithChildren
+  '/runs/$runId/push': typeof RunsRunIdPushRoute
   '/runs/$runId/review': typeof RunsRunIdReviewRoute
 }
 export interface FileRoutesByTo {
@@ -85,6 +92,7 @@ export interface FileRoutesByTo {
   '/prompts': typeof PromptsRoute
   '/settings': typeof SettingsRoute
   '/runs/$runId': typeof RunsRunIdRouteWithChildren
+  '/runs/$runId/push': typeof RunsRunIdPushRoute
   '/runs/$runId/review': typeof RunsRunIdReviewRoute
 }
 export interface FileRoutesById {
@@ -97,6 +105,7 @@ export interface FileRoutesById {
   '/prompts': typeof PromptsRoute
   '/settings': typeof SettingsRoute
   '/runs/$runId': typeof RunsRunIdRouteWithChildren
+  '/runs/$runId/push': typeof RunsRunIdPushRoute
   '/runs/$runId/review': typeof RunsRunIdReviewRoute
 }
 export interface FileRouteTypes {
@@ -110,6 +119,7 @@ export interface FileRouteTypes {
     | '/prompts'
     | '/settings'
     | '/runs/$runId'
+    | '/runs/$runId/push'
     | '/runs/$runId/review'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -121,6 +131,7 @@ export interface FileRouteTypes {
     | '/prompts'
     | '/settings'
     | '/runs/$runId'
+    | '/runs/$runId/push'
     | '/runs/$runId/review'
   id:
     | '__root__'
@@ -132,6 +143,7 @@ export interface FileRouteTypes {
     | '/prompts'
     | '/settings'
     | '/runs/$runId'
+    | '/runs/$runId/push'
     | '/runs/$runId/review'
   fileRoutesById: FileRoutesById
 }
@@ -211,14 +223,23 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof RunsRunIdReviewRouteImport
       parentRoute: typeof RunsRunIdRoute
     }
+    '/runs/$runId/push': {
+      id: '/runs/$runId/push'
+      path: '/push'
+      fullPath: '/runs/$runId/push'
+      preLoaderRoute: typeof RunsRunIdPushRouteImport
+      parentRoute: typeof RunsRunIdRoute
+    }
   }
 }
 
 interface RunsRunIdRouteChildren {
+  RunsRunIdPushRoute: typeof RunsRunIdPushRoute
   RunsRunIdReviewRoute: typeof RunsRunIdReviewRoute
 }
 
 const RunsRunIdRouteChildren: RunsRunIdRouteChildren = {
+  RunsRunIdPushRoute: RunsRunIdPushRoute,
   RunsRunIdReviewRoute: RunsRunIdReviewRoute,
 }
 
@@ -239,3 +260,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}

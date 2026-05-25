@@ -66,6 +66,13 @@ function RunView() {
             >
               Review diff <ArrowRight className="h-3 w-3" />
             </Link>
+            <Link
+              to="/runs/$runId/push"
+              params={{ runId: run.id }}
+              className="inline-flex items-center gap-1.5 rounded-md border border-border px-3 py-1.5 text-xs font-medium hover:bg-accent"
+            >
+              Commit & Push
+            </Link>
           </div>
         </div>
 
