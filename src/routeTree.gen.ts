@@ -19,44 +19,28 @@ import { Route as RunsRunIdRouteImport } from './routes/runs.$runId'
 import { Route as RunsRunIdReviewRouteImport } from './routes/runs.$runId.review'
 
 const SettingsRoute = SettingsRouteImport.update({
-  id: '/settings',
-  path: '/settings',
-  getParentRoute: () => rootRouteImport,
+  id: '/settings', path: '/settings', getParentRoute: () => rootRouteImport,
 } as any)
 const NewRoute = NewRouteImport.update({
-  id: '/new',
-  path: '/new',
-  getParentRoute: () => rootRouteImport,
+  id: '/new', path: '/new', getParentRoute: () => rootRouteImport,
 } as any)
 const HistoryRoute = HistoryRouteImport.update({
-  id: '/history',
-  path: '/history',
-  getParentRoute: () => rootRouteImport,
+  id: '/history', path: '/history', getParentRoute: () => rootRouteImport,
 } as any)
 const AnalyticsRoute = AnalyticsRouteImport.update({
-  id: '/analytics',
-  path: '/analytics',
-  getParentRoute: () => rootRouteImport,
+  id: '/analytics', path: '/analytics', getParentRoute: () => rootRouteImport,
 } as any)
 const AgentsRoute = AgentsRouteImport.update({
-  id: '/agents',
-  path: '/agents',
-  getParentRoute: () => rootRouteImport,
+  id: '/agents', path: '/agents', getParentRoute: () => rootRouteImport,
 } as any)
 const IndexRoute = IndexRouteImport.update({
-  id: '/',
-  path: '/',
-  getParentRoute: () => rootRouteImport,
+  id: '/', path: '/', getParentRoute: () => rootRouteImport,
 } as any)
 const RunsRunIdRoute = RunsRunIdRouteImport.update({
-  id: '/runs/$runId',
-  path: '/runs/$runId',
-  getParentRoute: () => rootRouteImport,
+  id: '/runs/$runId', path: '/runs/$runId', getParentRoute: () => rootRouteImport,
 } as any)
 const RunsRunIdReviewRoute = RunsRunIdReviewRouteImport.update({
-  id: '/review',
-  path: '/review',
-  getParentRoute: () => RunsRunIdRoute,
+  id: '/review', path: '/review', getParentRoute: () => RunsRunIdRoute,
 } as any)
 
 export interface FileRoutesByFullPath {
@@ -92,35 +76,10 @@ export interface FileRoutesById {
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
-  fullPaths:
-    | '/'
-    | '/agents'
-    | '/analytics'
-    | '/history'
-    | '/new'
-    | '/settings'
-    | '/runs/$runId'
-    | '/runs/$runId/review'
+  fullPaths: '/' | '/agents' | '/analytics' | '/history' | '/new' | '/settings' | '/runs/$runId' | '/runs/$runId/review'
   fileRoutesByTo: FileRoutesByTo
-  to:
-    | '/'
-    | '/agents'
-    | '/analytics'
-    | '/history'
-    | '/new'
-    | '/settings'
-    | '/runs/$runId'
-    | '/runs/$runId/review'
-  id:
-    | '__root__'
-    | '/'
-    | '/agents'
-    | '/analytics'
-    | '/history'
-    | '/new'
-    | '/settings'
-    | '/runs/$runId'
-    | '/runs/$runId/review'
+  to: '/' | '/agents' | '/analytics' | '/history' | '/new' | '/settings' | '/runs/$runId' | '/runs/$runId/review'
+  id: '__root__' | '/' | '/agents' | '/analytics' | '/history' | '/new' | '/settings' | '/runs/$runId' | '/runs/$runId/review'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -135,76 +94,20 @@ export interface RootRouteChildren {
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
-    '/settings': {
-      id: '/settings'
-      path: '/settings'
-      fullPath: '/settings'
-      preLoaderRoute: typeof SettingsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/new': {
-      id: '/new'
-      path: '/new'
-      fullPath: '/new'
-      preLoaderRoute: typeof NewRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/history': {
-      id: '/history'
-      path: '/history'
-      fullPath: '/history'
-      preLoaderRoute: typeof HistoryRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/analytics': {
-      id: '/analytics'
-      path: '/analytics'
-      fullPath: '/analytics'
-      preLoaderRoute: typeof AnalyticsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/agents': {
-      id: '/agents'
-      path: '/agents'
-      fullPath: '/agents'
-      preLoaderRoute: typeof AgentsRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/': {
-      id: '/'
-      path: '/'
-      fullPath: '/'
-      preLoaderRoute: typeof IndexRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/runs/$runId': {
-      id: '/runs/$runId'
-      path: '/runs/$runId'
-      fullPath: '/runs/$runId'
-      preLoaderRoute: typeof RunsRunIdRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/runs/$runId/review': {
-      id: '/runs/$runId/review'
-      path: '/review'
-      fullPath: '/runs/$runId/review'
-      preLoaderRoute: typeof RunsRunIdReviewRouteImport
-      parentRoute: typeof RunsRunIdRoute
-    }
+    '/settings': { id: '/settings'; path: '/settings'; fullPath: '/settings'; preLoaderRoute: typeof SettingsRouteImport; parentRoute: typeof rootRouteImport }
+    '/new': { id: '/new'; path: '/new'; fullPath: '/new'; preLoaderRoute: typeof NewRouteImport; parentRoute: typeof rootRouteImport }
+    '/history': { id: '/history'; path: '/history'; fullPath: '/history'; preLoaderRoute: typeof HistoryRouteImport; parentRoute: typeof rootRouteImport }
+    '/analytics': { id: '/analytics'; path: '/analytics'; fullPath: '/analytics'; preLoaderRoute: typeof AnalyticsRouteImport; parentRoute: typeof rootRouteImport }
+    '/agents': { id: '/agents'; path: '/agents'; fullPath: '/agents'; preLoaderRoute: typeof AgentsRouteImport; parentRoute: typeof rootRouteImport }
+    '/': { id: '/'; path: '/'; fullPath: '/'; preLoaderRoute: typeof IndexRouteImport; parentRoute: typeof rootRouteImport }
+    '/runs/$runId': { id: '/runs/$runId'; path: '/runs/$runId'; fullPath: '/runs/$runId'; preLoaderRoute: typeof RunsRunIdRouteImport; parentRoute: typeof rootRouteImport }
+    '/runs/$runId/review': { id: '/runs/$runId/review'; path: '/review'; fullPath: '/runs/$runId/review'; preLoaderRoute: typeof RunsRunIdReviewRouteImport; parentRoute: typeof RunsRunIdRoute }
   }
 }
 
-interface RunsRunIdRouteChildren {
-  RunsRunIdReviewRoute: typeof RunsRunIdReviewRoute
-}
-
-const RunsRunIdRouteChildren: RunsRunIdRouteChildren = {
-  RunsRunIdReviewRoute: RunsRunIdReviewRoute,
-}
-
-const RunsRunIdRouteWithChildren = RunsRunIdRoute._addFileChildren(
-  RunsRunIdRouteChildren,
-)
+interface RunsRunIdRouteChildren { RunsRunIdReviewRoute: typeof RunsRunIdReviewRoute }
+const RunsRunIdRouteChildren: RunsRunIdRouteChildren = { RunsRunIdReviewRoute: RunsRunIdReviewRoute }
+const RunsRunIdRouteWithChildren = RunsRunIdRoute._addFileChildren(RunsRunIdRouteChildren)
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
@@ -218,13 +121,3 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
-
-import type { getRouter } from './router.tsx'
-import type { startInstance } from './start.ts'
-declare module '@tanstack/react-start' {
-  interface Register {
-    ssr: true
-    router: Awaited<ReturnType<typeof getRouter>>
-    config: Awaited<ReturnType<typeof startInstance.getOptions>>
-  }
-}
