@@ -86,7 +86,7 @@ function Dashboard() {
       </section>
 
       <div className="grid lg:grid-cols-[1fr_360px] gap-6">
-      <div className="grid lg:grid-cols-[1fr_360px] gap-6">
+
         <div className="space-y-6 min-w-0">
           <section>
             <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3">Recent activity</h2>
