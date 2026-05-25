@@ -1,7 +1,8 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { LayoutDashboard, Plus, History, Settings, Bot, GitBranch, BarChart3, Network, Command } from "lucide-react";
+import { LayoutDashboard, Plus, History, Settings, Bot, GitBranch, BarChart3, Network, Command, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { CommandPalette } from "@/components/CommandPalette";
+import { NotificationBell } from "@/components/NotificationBell";
 
 const nav = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard, exact: true },
@@ -9,6 +10,7 @@ const nav = [
   { to: "/history", label: "History", icon: History, exact: false },
   { to: "/analytics", label: "Analytics", icon: BarChart3, exact: false },
   { to: "/agents", label: "Architecture", icon: Network, exact: false },
+  { to: "/prompts", label: "Prompt Studio", icon: Sparkles, exact: false },
   { to: "/settings", label: "Settings", icon: Settings, exact: false },
 ] as const;
 
@@ -18,14 +20,17 @@ export function AppShell({ children }: { children: React.ReactNode }) {
   return (
     <div className="flex min-h-screen bg-background text-foreground">
       <aside className="hidden md:flex w-56 flex-col border-r border-sidebar-border bg-sidebar">
-        <div className="flex h-14 items-center gap-2 px-4 border-b border-sidebar-border">
-          <div className="flex h-7 w-7 items-center justify-center rounded-md bg-primary/15 text-primary">
-            <Bot className="h-4 w-4" />
+        <div className="flex h-14 items-center justify-between gap-2 px-4 border-b border-sidebar-border">
+          <div className="flex items-center gap-2 min-w-0">
+            <div className="flex h-7 w-7 items-center justify-center rounded-md bg-primary/15 text-primary">
+              <Bot className="h-4 w-4" />
+            </div>
+            <div className="leading-tight min-w-0">
+              <div className="text-sm font-semibold truncate">Codex Ops</div>
+              <div className="text-[10px] text-muted-foreground mono">agent-v2.3.1</div>
+            </div>
           </div>
-          <div className="leading-tight">
-            <div className="text-sm font-semibold">Codex Ops</div>
-            <div className="text-[10px] text-muted-foreground mono">agent-v2.3.1</div>
-          </div>
+          <NotificationBell />
         </div>
         <nav className="flex-1 p-2 space-y-0.5">
           {nav.map((item) => {
@@ -66,6 +71,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <header className="md:hidden flex h-12 items-center gap-2 border-b border-border px-3">
           <Bot className="h-4 w-4 text-primary" />
           <span className="text-sm font-semibold">Codex Ops</span>
+          <div className="ml-auto"><NotificationBell /></div>
         </header>
         <main className="flex-1 min-w-0">{children}</main>
       </div>

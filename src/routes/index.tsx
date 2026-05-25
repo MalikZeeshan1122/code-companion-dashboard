@@ -2,9 +2,13 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { mockRuns } from "@/lib/mockData";
 import { StatusBadge } from "@/components/StatusBadge";
 import { SystemHealth } from "@/components/SystemHealth";
+import { ResourceMonitor } from "@/components/ResourceMonitor";
+import { EventStream } from "@/components/EventStream";
+import { IntelligenceFeed } from "@/components/IntelligenceFeed";
 import { ActivityFeed } from "@/components/ActivityFeed";
 import { ArchitectureDiagram } from "@/components/ArchitectureDiagram";
 import { Plus, GitPullRequest, FileCode2, Activity, CheckCircle2, AlertTriangle, Coins } from "lucide-react";
+
 
 export const Route = createFileRoute("/")({
   component: Dashboard,
@@ -47,8 +51,10 @@ function Dashboard() {
       </div>
 
       <SystemHealth />
+      <ResourceMonitor />
 
       <div className="grid grid-cols-2 md:grid-cols-5 gap-3">
+
         {stats.map((s) => {
           const Icon = s.icon;
           return (
@@ -80,29 +86,35 @@ function Dashboard() {
       </section>
 
       <div className="grid lg:grid-cols-[1fr_360px] gap-6">
-        <section>
-          <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3">Recent activity</h2>
-          <div className="rounded-lg border border-border bg-card divide-y divide-border">
-            {mockRuns.slice(0, 6).map((r) => (
-              <Link
-                key={r.id}
-                to="/runs/$runId"
-                params={{ runId: r.id }}
-                className="flex items-center gap-3 p-3 hover:bg-accent/40 transition text-sm"
-              >
-                <StatusBadge status={r.status} />
-                <span className="mono text-xs text-muted-foreground truncate w-44 shrink-0">{r.repo}</span>
-                <span className="flex-1 truncate">{r.task}</span>
-                <span className="mono text-xs text-muted-foreground hidden md:inline">
-                  +{r.additions} −{r.deletions}
-                </span>
-                <span className="text-xs text-muted-foreground w-16 text-right">{timeAgo(r.createdAt)}</span>
-              </Link>
-            ))}
-          </div>
-        </section>
+      <div className="grid lg:grid-cols-[1fr_360px] gap-6">
+        <div className="space-y-6 min-w-0">
+          <section>
+            <h2 className="text-sm font-semibold uppercase tracking-wider text-muted-foreground mb-3">Recent activity</h2>
+            <div className="rounded-lg border border-border bg-card divide-y divide-border">
+              {mockRuns.slice(0, 6).map((r) => (
+                <Link
+                  key={r.id}
+                  to="/runs/$runId"
+                  params={{ runId: r.id }}
+                  className="flex items-center gap-3 p-3 hover:bg-accent/40 transition text-sm"
+                >
+                  <StatusBadge status={r.status} />
+                  <span className="mono text-xs text-muted-foreground truncate w-44 shrink-0">{r.repo}</span>
+                  <span className="flex-1 truncate">{r.task}</span>
+                  <span className="mono text-xs text-muted-foreground hidden md:inline">
+                    +{r.additions} −{r.deletions}
+                  </span>
+                  <span className="text-xs text-muted-foreground w-16 text-right">{timeAgo(r.createdAt)}</span>
+                </Link>
+              ))}
+            </div>
+          </section>
+
+          <EventStream />
+        </div>
 
         <aside className="space-y-6">
+          <IntelligenceFeed />
           <ActivityFeed />
           <ArchitectureDiagram activeNode="patch" completed={["clone", "ast", "context", "plan"]} compact />
         </aside>
@@ -110,6 +122,7 @@ function Dashboard() {
     </div>
   );
 }
+
 
 function RunCard({ r }: { r: ReturnType<typeof mockRuns.slice>[number] }) {
   const totalTokens = r.tokensIn + r.tokensOut;
