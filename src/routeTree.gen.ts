@@ -10,6 +10,7 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as PromptsRouteImport } from './routes/prompts'
 import { Route as NewRouteImport } from './routes/new'
 import { Route as HistoryRouteImport } from './routes/history'
 import { Route as AnalyticsRouteImport } from './routes/analytics'
@@ -21,6 +22,11 @@ import { Route as RunsRunIdReviewRouteImport } from './routes/runs.$runId.review
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PromptsRoute = PromptsRouteImport.update({
+  id: '/prompts',
+  path: '/prompts',
   getParentRoute: () => rootRouteImport,
 } as any)
 const NewRoute = NewRouteImport.update({
@@ -65,6 +71,7 @@ export interface FileRoutesByFullPath {
   '/analytics': typeof AnalyticsRoute
   '/history': typeof HistoryRoute
   '/new': typeof NewRoute
+  '/prompts': typeof PromptsRoute
   '/settings': typeof SettingsRoute
   '/runs/$runId': typeof RunsRunIdRouteWithChildren
   '/runs/$runId/review': typeof RunsRunIdReviewRoute
@@ -75,6 +82,7 @@ export interface FileRoutesByTo {
   '/analytics': typeof AnalyticsRoute
   '/history': typeof HistoryRoute
   '/new': typeof NewRoute
+  '/prompts': typeof PromptsRoute
   '/settings': typeof SettingsRoute
   '/runs/$runId': typeof RunsRunIdRouteWithChildren
   '/runs/$runId/review': typeof RunsRunIdReviewRoute
@@ -86,6 +94,7 @@ export interface FileRoutesById {
   '/analytics': typeof AnalyticsRoute
   '/history': typeof HistoryRoute
   '/new': typeof NewRoute
+  '/prompts': typeof PromptsRoute
   '/settings': typeof SettingsRoute
   '/runs/$runId': typeof RunsRunIdRouteWithChildren
   '/runs/$runId/review': typeof RunsRunIdReviewRoute
@@ -98,6 +107,7 @@ export interface FileRouteTypes {
     | '/analytics'
     | '/history'
     | '/new'
+    | '/prompts'
     | '/settings'
     | '/runs/$runId'
     | '/runs/$runId/review'
@@ -108,6 +118,7 @@ export interface FileRouteTypes {
     | '/analytics'
     | '/history'
     | '/new'
+    | '/prompts'
     | '/settings'
     | '/runs/$runId'
     | '/runs/$runId/review'
@@ -118,6 +129,7 @@ export interface FileRouteTypes {
     | '/analytics'
     | '/history'
     | '/new'
+    | '/prompts'
     | '/settings'
     | '/runs/$runId'
     | '/runs/$runId/review'
@@ -129,6 +141,7 @@ export interface RootRouteChildren {
   AnalyticsRoute: typeof AnalyticsRoute
   HistoryRoute: typeof HistoryRoute
   NewRoute: typeof NewRoute
+  PromptsRoute: typeof PromptsRoute
   SettingsRoute: typeof SettingsRoute
   RunsRunIdRoute: typeof RunsRunIdRouteWithChildren
 }
@@ -140,6 +153,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/prompts': {
+      id: '/prompts'
+      path: '/prompts'
+      fullPath: '/prompts'
+      preLoaderRoute: typeof PromptsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/new': {
@@ -212,9 +232,20 @@ const rootRouteChildren: RootRouteChildren = {
   AnalyticsRoute: AnalyticsRoute,
   HistoryRoute: HistoryRoute,
   NewRoute: NewRoute,
+  PromptsRoute: PromptsRoute,
   SettingsRoute: SettingsRoute,
   RunsRunIdRoute: RunsRunIdRouteWithChildren,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
