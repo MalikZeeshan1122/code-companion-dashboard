@@ -581,3 +581,187 @@ export function statusColor(status: RunStatus) {
     case "failed": return "status-failed";
   }
 }
+
+// ─── Global event stream ─────────────────────────────────────
+export type EventKind =
+  | "RUN_STARTED" | "PATCH_WRITTEN" | "VALIDATION_FAIL" | "VALIDATION_PASS"
+  | "CONTEXT_HIT" | "CRITIC_REVISE" | "RUN_MERGED" | "RUN_FAILED" | "TOKEN_SPIKE";
+
+export interface StreamEvent {
+  ts: string; runId: string; kind: EventKind; target: string; detail: string;
+}
+
+export const mockEventStream: StreamEvent[] = [
+  { ts: "14:23:11.482", runId: "run_8af23", kind: "PATCH_WRITTEN", target: "routes/payments.ts", detail: "+9/-12 lines" },
+  { ts: "14:23:10.901", runId: "run_92ke1", kind: "VALIDATION_FAIL", target: "TypeError x3", detail: "retry #2" },
+  { ts: "14:23:09.340", runId: "run_8af23", kind: "CONTEXT_HIT", target: "lib/validation.ts", detail: "score 0.94" },
+  { ts: "14:23:08.112", runId: "run_5tr88", kind: "RUN_STARTED", target: "acme/cli-tools", detail: "add --json flag" },
+  { ts: "14:23:07.555", runId: "run_92ke1", kind: "PATCH_WRITTEN", target: "models/user.ts", detail: "+23/-5 lines" },
+  { ts: "14:23:05.011", runId: "run_8af23", kind: "CRITIC_REVISE", target: "plan v2", detail: "missing error standardization" },
+  { ts: "14:23:02.330", runId: "run_2bn10", kind: "RUN_MERGED", target: "PR #482", detail: "auto-merged · risk 31" },
+  { ts: "14:22:58.901", runId: "run_92ke1", kind: "TOKEN_SPIKE", target: "Planner", detail: "3x avg, possible loop" },
+  { ts: "14:22:51.220", runId: "run_8af23", kind: "VALIDATION_PASS", target: "tsc --noEmit", detail: "0 errors · 4.2s" },
+  { ts: "14:22:43.012", runId: "run_71xqq", kind: "RUN_FAILED", target: "async migration", detail: "timeout @ node:patch" },
+  { ts: "14:22:38.450", runId: "run_8af23", kind: "PATCH_WRITTEN", target: "lib/validation.ts", detail: "+28/-0 lines · new" },
+  { ts: "14:22:30.001", runId: "run_5tr88", kind: "CONTEXT_HIT", target: "cli/commands/", detail: "8 hits avg 0.81" },
+];
+
+export const EVENT_TONE: Record<EventKind, string> = {
+  RUN_STARTED: "text-[color:var(--syntax-fn)]",
+  PATCH_WRITTEN: "text-[color:var(--status-running)]",
+  VALIDATION_FAIL: "text-[color:var(--status-failed)]",
+  VALIDATION_PASS: "text-[color:var(--status-merged)]",
+  CONTEXT_HIT: "text-[color:var(--syntax-keyword)]",
+  CRITIC_REVISE: "text-[color:var(--status-planning)]",
+  RUN_MERGED: "text-[color:var(--status-merged)]",
+  RUN_FAILED: "text-[color:var(--status-failed)]",
+  TOKEN_SPIKE: "text-[color:var(--status-planning)]",
+};
+
+// ─── Intelligence alerts ─────────────────────────────────────
+export type AlertSeverity = "info" | "warn" | "critical";
+export interface IntelAlert { severity: AlertSeverity; title: string; body: string; action?: string; }
+
+export const mockAlerts: IntelAlert[] = [
+  { severity: "warn", title: "Hotspot detected", body: "3 runs this week touched auth.ts. Consider refactoring shared auth utilities.", action: "View runs" },
+  { severity: "critical", title: "Cost anomaly", body: "run_92ke1 is using 3.2x avg tokens. Possible infinite critic loop.", action: "Inspect" },
+  { severity: "info", title: "Success pattern", body: "Refactor tasks: 94% success vs 67% for feature tasks. Bias toward refactor framing.", action: "Open analytics" },
+  { severity: "info", title: "Queue health", body: "Avg queue wait dropped 38% after worker pool expanded to 5.", action: "View pool" },
+];
+
+// ─── Sparklines ──────────────────────────────────────────────
+export const mockSparklines = {
+  cpu: [22, 28, 31, 27, 44, 51, 48, 55, 62, 58, 49, 41, 38, 44, 52, 60, 55, 51, 47, 43],
+  redisQueue: [4, 5, 7, 6, 9, 11, 10, 12, 14, 13, 12, 12, 11, 13, 14, 16, 14, 13, 12, 12],
+  tokensPerMin: [410, 520, 480, 612, 740, 820, 790, 840, 910, 880, 960, 1020, 980, 940, 1010, 1080, 1040, 1010, 980, 1020],
+};
+
+// ─── Notifications ───────────────────────────────────────────
+export interface AppNotification {
+  id: string; ts: string; kind: "review" | "fail" | "merge" | "alert";
+  title: string; body: string; runId?: string; read: boolean;
+}
+
+export const mockNotifications: AppNotification[] = [
+  { id: "n1", ts: "2m ago", kind: "review", title: "Review requested", body: "run_8af23 — 7 files awaiting your approval.", runId: "run_8af23", read: false },
+  { id: "n2", ts: "8m ago", kind: "alert", title: "Cost anomaly", body: "run_92ke1 token usage 3.2x average.", runId: "run_92ke1", read: false },
+  { id: "n3", ts: "1h ago", kind: "merge", title: "PR merged", body: "billing-svc Stripe v3 migration shipped to main.", runId: "run_2bn10", read: true },
+  { id: "n4", ts: "3h ago", kind: "fail", title: "Run failed", body: "data-pipeline async migration timed out at patch node.", runId: "run_71xqq", read: true },
+];
+
+// ─── Prompt Studio ───────────────────────────────────────────
+export interface PromptConfig {
+  node: NodeKey; version: string; updatedAt: string; winRate: number; avgTokens: number; body: string;
+}
+
+export const mockPrompts: PromptConfig[] = [
+  {
+    node: "plan", version: "v4.2", updatedAt: "2026-05-24", winRate: 91, avgTokens: 8420,
+    body: `You are the Edit Planner. Given a codebase summary, retrieved context, and a task, output a JSON plan of ordered atomic edits.
+
+Rules:
+- Each step must touch a coherent, reviewable unit (one concern per step)
+- Reject any step that mixes unrelated changes
+- Prefer additive changes over destructive ones
+- Each step must list: title, description, files[]
+
+Variables: {{task_description}}, {{retrieved_context}}, {{repo_language}}`,
+  },
+  {
+    node: "patch", version: "v3.1", updatedAt: "2026-05-22", winRate: 87, avgTokens: 14200,
+    body: `You are the Patch Writer. For a single file, produce a unified diff that implements the plan step.
+
+Rules:
+- Preserve existing code style (indentation, quote style, import order)
+- Never delete public exports without explicit instruction
+- Inline a short AI commentary explaining the change
+- If unsure, prefer the smaller change and flag it for review
+
+Variables: {{file_path}}, {{file_contents}}, {{plan_step}}, {{retrieved_context}}`,
+  },
+  {
+    node: "context", version: "v2.0", updatedAt: "2026-05-18", winRate: 94, avgTokens: 1240,
+    body: `You are the Context Retriever. Rewrite the user task into a dense retrieval query, then select the top-k most relevant chunks via MMR.
+
+Rules:
+- Drop stopwords and project-specific jargon already in the codebase
+- Boost chunks containing function definitions over usage sites
+- Diversify with MMR lambda=0.7`,
+  },
+];
+
+// ─── Per-file impact analysis ────────────────────────────────
+export interface FileImpact {
+  filePath: string;
+  functions: { name: string; complexityBefore: number; complexityAfter: number }[];
+  typeSafety: { beforeAny: number; afterAny: number; beforeCast: number; afterCast: number };
+  coverage: { lineBefore: number; lineAfter: number; branchBefore: number; branchAfter: number };
+  perfDeltaMs: number;
+  securityNotes: string[];
+}
+
+export const mockFileImpacts: Record<string, FileImpact> = {
+  "src/routes/payments.ts": {
+    filePath: "src/routes/payments.ts",
+    functions: [
+      { name: "createPayment", complexityBefore: 8, complexityAfter: 6 },
+      { name: "validateRequest", complexityBefore: 4, complexityAfter: 4 },
+    ],
+    typeSafety: { beforeAny: 3, afterAny: 0, beforeCast: 1, afterCast: 0 },
+    coverage: { lineBefore: 82, lineAfter: 91, branchBefore: 71, branchAfter: 88 },
+    perfDeltaMs: 0.8,
+    securityNotes: ["Input sanitized before DB calls", "Error messages do not leak internals", "Schema validates before business logic"],
+  },
+  "src/routes/refunds.ts": {
+    filePath: "src/routes/refunds.ts",
+    functions: [{ name: "createRefund", complexityBefore: 5, complexityAfter: 4 }],
+    typeSafety: { beforeAny: 1, afterAny: 0, beforeCast: 0, afterCast: 0 },
+    coverage: { lineBefore: 76, lineAfter: 88, branchBefore: 65, branchAfter: 82 },
+    perfDeltaMs: 0.4,
+    securityNotes: ["Reason enum prevents unsupported values", "Amount bounded by Money schema"],
+  },
+  "src/lib/validation.ts": {
+    filePath: "src/lib/validation.ts",
+    functions: [{ name: "validate", complexityBefore: 0, complexityAfter: 3 }],
+    typeSafety: { beforeAny: 0, afterAny: 1, beforeCast: 0, afterCast: 0 },
+    coverage: { lineBefore: 0, lineAfter: 100, branchBefore: 0, branchAfter: 95 },
+    perfDeltaMs: 0.1,
+    securityNotes: ["New module, no I/O", "Zod parse is pure"],
+  },
+  "tests/payments.test.ts": {
+    filePath: "tests/payments.test.ts",
+    functions: [],
+    typeSafety: { beforeAny: 0, afterAny: 0, beforeCast: 0, afterCast: 0 },
+    coverage: { lineBefore: 100, lineAfter: 100, branchBefore: 100, branchAfter: 100 },
+    perfDeltaMs: 0,
+    securityNotes: ["Test-only change, no production impact"],
+  },
+};
+
+export const mockDepAudit = {
+  added: [{ name: "zod", version: "3.22.4", weeklyDownloads: "45M", trusted: true }],
+  removed: [{ name: "express-validator", version: "7.0.1" }],
+  vulnerabilities: 0,
+};
+
+// ─── Critic loop ─────────────────────────────────────────────
+export const mockCriticLoop = [
+  { iter: 1, actor: "planner" as const, msg: "Draft: 4 steps, modify shared validation module + 3 routes." },
+  { iter: 1, actor: "critic" as const, msg: "Reject: missing error message standardization across routes.", verdict: "revise" as const },
+  { iter: 2, actor: "planner" as const, msg: "Revised: 4 steps + extracted shared error envelope." },
+  { iter: 2, actor: "critic" as const, msg: "Reject: tests step lumps refunds & payments — split for atomicity.", verdict: "revise" as const },
+  { iter: 3, actor: "planner" as const, msg: "Revised: 4 steps, atomic test cases per route." },
+  { iter: 3, actor: "critic" as const, msg: "Approved. Convergence score 0.94.", verdict: "approve" as const },
+];
+
+// ─── Security findings ───────────────────────────────────────
+export interface SecurityFinding {
+  rule: string; severity: "low" | "med" | "high" | "critical";
+  file: string; line: number; message: string;
+}
+
+export const mockSecurityFindings: SecurityFinding[] = [
+  { rule: "owasp.input-validation", severity: "low", file: "src/routes/webhooks.ts", line: 24, message: "Webhook payload not validated against schema." },
+  { rule: "no-hardcoded-secret", severity: "low", file: "tests/payments.test.ts", line: 8, message: "Test fixture uses dummy key (sk_test_*) — acceptable." },
+];
+
