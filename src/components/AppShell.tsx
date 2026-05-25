@@ -31,7 +31,10 @@ export function AppShell({ children }: { children: React.ReactNode }) {
               <div className="text-[10px] text-muted-foreground mono">agent-v2.3.1</div>
             </div>
           </div>
-          <NotificationBell />
+          <div className="flex items-center gap-0.5">
+            <ThemeToggle />
+            <NotificationBell />
+          </div>
         </div>
         <nav className="flex-1 p-2 space-y-0.5">
           {nav.map((item) => {
