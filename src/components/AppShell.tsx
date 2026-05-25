@@ -75,7 +75,7 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         <header className="md:hidden flex h-12 items-center gap-2 border-b border-border px-3">
           <Bot className="h-4 w-4 text-primary" />
           <span className="text-sm font-semibold">Codex Ops</span>
-          <div className="ml-auto"><NotificationBell /></div>
+          <div className="ml-auto flex items-center gap-0.5"><ThemeToggle /><NotificationBell /></div>
         </header>
         <main className="flex-1 min-w-0">{children}</main>
       </div>
