@@ -26,6 +26,8 @@ const PHASES = [
   { key: "done", label: "Done" },
 ] as const;
 
+type PhaseKey = (typeof PHASES)[number]["key"] | "error";
+
 function PushPage() {
   const { run } = Route.useLoaderData();
 
