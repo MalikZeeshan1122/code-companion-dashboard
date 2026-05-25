@@ -1,11 +1,14 @@
 import { Link, useRouterState } from "@tanstack/react-router";
-import { LayoutDashboard, Plus, History, Settings, Bot, GitBranch } from "lucide-react";
+import { LayoutDashboard, Plus, History, Settings, Bot, GitBranch, BarChart3, Network, Command } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { CommandPalette } from "@/components/CommandPalette";
 
 const nav = [
   { to: "/", label: "Dashboard", icon: LayoutDashboard, exact: true },
   { to: "/new", label: "New Task", icon: Plus, exact: false },
   { to: "/history", label: "History", icon: History, exact: false },
+  { to: "/analytics", label: "Analytics", icon: BarChart3, exact: false },
+  { to: "/agents", label: "Architecture", icon: Network, exact: false },
   { to: "/settings", label: "Settings", icon: Settings, exact: false },
 ] as const;
 
@@ -45,9 +48,17 @@ export function AppShell({ children }: { children: React.ReactNode }) {
             );
           })}
         </nav>
-        <div className="p-3 border-t border-sidebar-border text-[11px] text-muted-foreground space-y-1">
-          <div className="flex items-center gap-1.5"><GitBranch className="h-3 w-3" />main · clean</div>
-          <div className="mono">7 runs today</div>
+        <div className="p-3 border-t border-sidebar-border space-y-2">
+          <div className="flex items-center gap-1.5 text-[11px] text-muted-foreground">
+            <Command className="h-3 w-3" />
+            <span>Press</span>
+            <kbd className="mono px-1 border border-border rounded text-[10px]">⌘K</kbd>
+            <span>anywhere</span>
+          </div>
+          <div className="text-[11px] text-muted-foreground space-y-0.5">
+            <div className="flex items-center gap-1.5"><GitBranch className="h-3 w-3" />main · clean</div>
+            <div className="mono">7 runs today · $14.82</div>
+          </div>
         </div>
       </aside>
 
@@ -58,6 +69,8 @@ export function AppShell({ children }: { children: React.ReactNode }) {
         </header>
         <main className="flex-1 min-w-0">{children}</main>
       </div>
+
+      <CommandPalette />
     </div>
   );
 }
