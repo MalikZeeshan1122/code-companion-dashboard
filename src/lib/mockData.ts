@@ -765,3 +765,44 @@ export const mockSecurityFindings: SecurityFinding[] = [
   { rule: "no-hardcoded-secret", severity: "low", file: "tests/payments.test.ts", line: 8, message: "Test fixture uses dummy key (sk_test_*) — acceptable." },
 ];
 
+// ─── Push / Commit workflow ──────────────────────────────────
+export interface BranchInfo {
+  name: string;
+  protected: boolean;
+  ahead: number;
+  behind: number;
+  lastCommit: string;
+}
+
+export const mockBranches: BranchInfo[] = [
+  { name: "main", protected: true, ahead: 0, behind: 0, lastCommit: "a3f21d8" },
+  { name: "feat/auth-refactor", protected: false, ahead: 12, behind: 3, lastCommit: "b8e44c1" },
+  { name: "staging", protected: true, ahead: 0, behind: 2, lastCommit: "d1209aa" },
+];
+
+export interface CommitFile {
+  filePath: string;
+  status: "added" | "modified" | "deleted" | "renamed";
+  additions: number;
+  deletions: number;
+  staged: boolean;
+}
+
+export const mockCommitFiles: CommitFile[] = [
+  { filePath: "src/lib/validation.ts", status: "added", additions: 28, deletions: 0, staged: true },
+  { filePath: "src/routes/payments.ts", status: "modified", additions: 9, deletions: 12, staged: true },
+  { filePath: "src/routes/refunds.ts", status: "modified", additions: 7, deletions: 8, staged: true },
+  { filePath: "tests/payments.test.ts", status: "modified", additions: 14, deletions: 3, staged: true },
+];
+
+export interface PushStatus {
+  phase: "idle" | "committing" | "pushing" | "pr" | "done" | "error";
+  message: string;
+  progress: number; // 1..100
+  logs: string[];
+  prUrl?: string;
+}
+
+export const generateCommitMessage = (run: AgentRun) =>
+  `feat(${run.repo.split("/").pop()}): ${run.task.toLowerCase().replace(/[^a-z0-9 ]/g, "").trim().replace(/\s+/g, "-")}`;
+
