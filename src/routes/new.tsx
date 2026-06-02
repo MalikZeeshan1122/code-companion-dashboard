@@ -1,8 +1,10 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { useState } from "react";
-import { Sparkles, GitBranch, Github, Wand2, Shield, FileCode2, BookOpen, Wrench } from "lucide-react";
-import { mockSubGoals, type AgentPersona } from "@/lib/mockData";
+import { Sparkles, GitBranch, Github, Wand2, Shield, FileCode2, BookOpen, Wrench, Loader2, AlertTriangle } from "lucide-react";
+import type { AgentPersona } from "@/lib/mockData";
+import { createRunFn, decomposeFn } from "@/lib/agentRuns";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
 
 export const Route = createFileRoute("/new")({
   component: NewTask,
@@ -39,19 +41,43 @@ function NewTask() {
   const [blockGlob, setBlockGlob] = useState("infra/**, .github/**");
   const [subGoals, setSubGoals] = useState<string[]>([]);
   const [decomposing, setDecomposing] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+  const [error, setError] = useState<string | null>(null);
 
-  const decompose = () => {
+  const decompose = async () => {
     if (!task.trim()) return;
     setDecomposing(true);
-    setTimeout(() => {
-      setSubGoals(mockSubGoals);
+    try {
+      const goals = await decomposeFn({ data: { task, persona } });
+      setSubGoals(goals);
+    } catch {
+      setSubGoals([]);
+    } finally {
       setDecomposing(false);
-    }, 700);
+    }
   };
 
-  const submit = (e: React.FormEvent) => {
+  const submit = async (e: React.FormEvent) => {
     e.preventDefault();
-    navigate({ to: "/runs/$runId", params: { runId: "run_8af23" } });
+    if (!task.trim() || submitting) return;
+    setSubmitting(true);
+    setError(null);
+    const pending = toast.loading("Dispatching agent…", { description: task.slice(0, 60) });
+    try {
+      const run = await createRunFn({
+        data: { repo, branch, task, persona, risk, maxFiles, requireTests, allowGlob, blockGlob },
+      });
+      if (typeof window !== "undefined") {
+        sessionStorage.setItem(`codexops:animate:${run.id}`, "1");
+      }
+      toast.success("Agent run created", { id: pending, description: `${run.provider === "openai" ? "GPT" : "Mock"} · ${run.id}` });
+      await navigate({ to: "/live/$runId", params: { runId: run.id } });
+    } catch (err) {
+      const msg = err instanceof Error ? err.message : "Failed to start the agent run.";
+      setError(msg);
+      toast.error("Could not start run", { id: pending, description: msg });
+      setSubmitting(false);
+    }
   };
 
   const complexity = Math.min(100, maxFiles * 3 + (task.length > 80 ? 20 : 10) + (risk === "Aggressive" ? 25 : risk === "Balanced" ? 12 : 0));
@@ -184,10 +210,32 @@ function NewTask() {
           </div>
         </div>
 
+        {error && (
+          <div className="flex items-start gap-2 rounded-md border border-[color:var(--status-failed)]/40 bg-[color:var(--status-failed)]/10 px-3 py-2 text-xs text-[color:var(--status-failed)]">
+            <AlertTriangle className="h-4 w-4 shrink-0 mt-0.5" /> {error}
+          </div>
+        )}
+
         <div className="flex items-center justify-between pt-4 border-t border-border">
-          <div className="text-xs text-muted-foreground">Runs in an isolated Docker sandbox. You review the diff before any PR is opened.</div>
-          <button type="submit" className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90">
-            <Sparkles className="h-4 w-4" /> Kick off agent
+          <div className="text-xs text-muted-foreground">
+            {submitting
+              ? "Agent is planning the change with GPT — this can take a few seconds…"
+              : "Plans, patches, and validates, then surfaces a diff for review before any PR is opened."}
+          </div>
+          <button
+            type="submit"
+            disabled={submitting || !task.trim()}
+            className="inline-flex items-center gap-2 rounded-md bg-primary px-4 py-2 text-sm font-medium text-primary-foreground hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {submitting ? (
+              <>
+                <Loader2 className="h-4 w-4 animate-spin" /> Planning…
+              </>
+            ) : (
+              <>
+                <Sparkles className="h-4 w-4" /> Kick off agent
+              </>
+            )}
           </button>
         </div>
       </form>

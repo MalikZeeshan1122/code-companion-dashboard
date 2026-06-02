@@ -11,6 +11,7 @@ import {
 import appCss from "../styles.css?url";
 import { AppShell } from "@/components/AppShell";
 import { ThemeProvider } from "@/components/ThemeProvider";
+import { Toaster } from "@/components/ui/sonner";
 
 function NotFoundComponent() {
   return (
@@ -119,6 +120,7 @@ function RootComponent() {
         <AppShell>
           <Outlet />
         </AppShell>
+        <Toaster richColors closeButton position="top-right" />
       </ThemeProvider>
     </QueryClientProvider>
   );

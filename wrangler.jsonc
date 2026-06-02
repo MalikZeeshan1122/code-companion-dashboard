@@ -4,4 +4,28 @@
   "compatibility_date": "2025-09-24",
   "compatibility_flags": ["nodejs_compat"],
   "main": "src/server.ts",
+
+  // --- Persistence (Cloudflare D1) ---------------------------------------
+  // Real runs are stored in D1 in production. To enable:
+  //   1. npx wrangler d1 create codex-ops
+  //   2. Paste the returned database_id below and uncomment this block.
+  //   3. npx wrangler d1 migrations apply codex-ops --remote
+  // Without a DB binding the app falls back to an in-memory store.
+  //
+  // "d1_databases": [
+  //   {
+  //     "binding": "DB",
+  //     "database_name": "codex-ops",
+  //     "database_id": "<your-database-id>",
+  //     "migrations_dir": "migrations"
+  //   }
+  // ],
+
+  // --- Secrets ------------------------------------------------------------
+  // Set the OpenAI key as a secret (never commit it):
+  //   npx wrangler secret put OPENAI_API_KEY
+  // Optionally override the model via a var:
+  "vars": {
+    "OPENAI_MODEL": "gpt-4o-mini"
+  }
 }

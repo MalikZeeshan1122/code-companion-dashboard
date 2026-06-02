@@ -68,6 +68,9 @@ async function normalizeCatastrophicSsrResponse(response: Response): Promise<Res
 
 export default {
   async fetch(request: Request, env: unknown, ctx: unknown) {
+    // Expose Worker bindings/secrets (e.g. DB, OPENAI_API_KEY) to server
+    // functions via a global, since TanStack Start doesn't thread `env` through.
+    (globalThis as unknown as { __CF_ENV?: unknown }).__CF_ENV = env;
     try {
       const handler = await getServerEntry();
       const response = await handler.fetch(request, env, ctx);
