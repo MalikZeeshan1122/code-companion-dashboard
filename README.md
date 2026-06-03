@@ -236,6 +236,10 @@ Natural next steps:
 - **Port the mock screens** (analytics, command center) onto persisted run data.
 - **Automated tests** (none currently exist).
 
+## Contributor
+
+**Muhammad Zeeshan** — [LinkedIn](https://www.linkedin.com/in/muhammadzeeshan007/)
+
 ## License
 
 Private / unlicensed.

@@ -1,5 +1,9 @@
 {
   "name": "tanstack_start_ts",
+  "author": {
+    "name": "Muhammad Zeeshan",
+    "url": "https://www.linkedin.com/in/muhammadzeeshan007/"
+  },
   "private": true,
   "sideEffects": false,
   "type": "module",

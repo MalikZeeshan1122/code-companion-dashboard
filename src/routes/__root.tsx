@@ -77,12 +77,11 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { name: "viewport", content: "width=device-width, initial-scale=1" },
       { title: "Codex Ops — Coding Agent Dashboard" },
       { name: "description", content: "Plan, preview, and review repo-level coding agent runs." },
-      { name: "author", content: "Codex Ops" },
+      { name: "author", content: "Muhammad Zeeshan" },
       { property: "og:title", content: "Codex Ops — Coding Agent Dashboard" },
       { property: "og:description", content: "Plan, preview, and review repo-level coding agent runs." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
-      { name: "twitter:site", content: "@Lovable" },
     ],
     links: [
       {

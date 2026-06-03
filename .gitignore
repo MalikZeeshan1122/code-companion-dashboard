@@ -25,6 +25,9 @@ dist-ssr
 .wrangler/
 .dev.vars
 
+# Lovable platform metadata (not used for this project)
+.lovable/
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json
